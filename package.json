@@ -8,7 +8,13 @@
     "lint:js": "eslint *.js",
     "lint:css": "stylelint *.css",
     "lint:html": "htmlhint *.html",
-    "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+    "build": "node build.js",
+    "deploy:dev": "powershell -File .\\deploy.ps1 dev",
+    "deploy:prod": "powershell -File .\\deploy.ps1 prod",
+    "start": "npx http-server -o -p 8080",
+    "start:dev": "npm run lint && npm run start",
+    "start:prod": "npm run lint && npm run build && npm run start"
   },
   "repository": {
     "type": "git",
@@ -19,11 +25,14 @@
   "bugs": {
     "url": "https://github.com/saketmishra7224/CI-CD/issues"
   },
-  "homepage": "https://github.com/saketmishra7224/CI-CD#readme",
-  "devDependencies": {
+  "homepage": "https://github.com/saketmishra7224/CI-CD#readme",  "devDependencies": {
     "eslint": "^8.52.0",
     "htmlhint": "^1.1.4",
     "stylelint": "^15.11.0",
-    "stylelint-config-standard": "^34.0.0"
+    "stylelint-config-standard": "^34.0.0",
+    "clean-css-cli": "^5.6.2",
+    "html-minifier": "^4.0.0",
+    "http-server": "^14.1.1",
+    "terser": "^5.19.4"
   }
 }
