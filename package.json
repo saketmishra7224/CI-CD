@@ -1,0 +1,29 @@
+{
+  "name": "todo-list-app",
+  "version": "1.0.0",
+  "description": "A simple to-do list application",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"No tests specified yet\" && exit 0",
+    "lint:js": "eslint *.js",
+    "lint:css": "stylelint *.css",
+    "lint:html": "htmlhint *.html",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saketmishra7224/CI-CD.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saketmishra7224/CI-CD/issues"
+  },
+  "homepage": "https://github.com/saketmishra7224/CI-CD#readme",
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "htmlhint": "^1.1.4",
+    "stylelint": "^15.11.0",
+    "stylelint-config-standard": "^34.0.0"
+  }
+}

@@ -1,0 +1,73 @@
+name: Development Workflow
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        npm install -g htmlhint
+        npm install -g stylelint
+        npm install -g eslint
+    
+    - name: Validate HTML
+      run: htmlhint *.html
+    
+    - name: Lint CSS
+      run: stylelint "*.css" || true
+    
+    - name: Lint JavaScript
+      run: eslint "*.js" || true
+      
+    # Add a stage to run any automated tests if implemented
+    
+    - name: Archive build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: website-files
+        path: |
+          *.html
+          *.css
+          *.js
+          *.png
+          *.ico
+        
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: website-files
+        path: ./site
+        
+    - name: Deploy to Development Environment
+      run: |
+        echo "Deploying to development environment..."
+        # In a real-world scenario, you might deploy to a development server
+        # For example:
+        # - AWS S3 bucket configured for dev environment
+        # - Azure Static Web App dev instance
+        # - Netlify/Vercel preview deployment
+        
+        # This is a placeholder for the actual deployment command
+        echo "Development deployment complete"
