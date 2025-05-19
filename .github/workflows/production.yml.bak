@@ -1,4 +1,4 @@
-﻿name: Production Workflow
+name: Production Workflow
 
 on:
   push:
@@ -20,8 +20,7 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        
-    - name: Install dependencies
+          - name: Install dependencies
       run: npm ci || npm install
     
     - name: Validate HTML
@@ -41,20 +40,24 @@ jobs:
       env:
         NODE_ENV: production
       
+    # Add stage for running tests if implemented
+      
     - name: Archive build artifact
       uses: actions/upload-artifact@v3
       with:
         name: website-files
-        path: build/
+        path: |
+          *.html
+          *.css
+          *.js
+          *.png
+          *.ico
         
   deploy-prod:
     needs: build
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code for workflow scripts
-      uses: actions/checkout@v3
-        
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
@@ -70,9 +73,5 @@ jobs:
         # - GitHub Pages
         # - Netlify/Vercel production environment
         
+        # This is a placeholder for the actual deployment command
         echo "Production deployment complete"
-        
-    - name: Notify Deployment Status
-      run: |
-        echo "Production deployment completed successfully!"
-        # Add notification steps (Slack, Teams, email) here if needed

@@ -25,14 +25,15 @@
   "bugs": {
     "url": "https://github.com/saketmishra7224/CI-CD/issues"
   },
-  "homepage": "https://github.com/saketmishra7224/CI-CD#readme",  "devDependencies": {
-    "eslint": "^8.52.0",
+  "homepage": "https://github.com/saketmishra7224/CI-CD#readme",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "eslint": "^8.57.1",
+    "html-minifier": "^4.0.0",
     "htmlhint": "^1.1.4",
+    "http-server": "^14.1.1",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
-    "clean-css-cli": "^5.6.2",
-    "html-minifier": "^4.0.0",
-    "http-server": "^14.1.1",
-    "terser": "^5.19.4"
+    "terser": "^5.39.2"
   }
 }
