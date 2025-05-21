@@ -1,0 +1,21 @@
+#!/bin/sh
+# Pre-commit hook to check for CSS linting errors
+
+echo "Running CSS linting check..."
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(css)$')
+
+if [ -z "$FILES" ]; then
+  echo "No CSS files to check. Skipping CSS linting."
+  exit 0
+fi
+
+# Run stylelint on the staged CSS files
+npx stylelint $FILES
+
+if [ $? -ne 0 ]; then
+  echo "❌ CSS linting failed. Please fix the above errors and try again."
+  exit 1
+fi
+
+echo "✅ CSS linting passed!"
+exit 0
