@@ -1,0 +1,150 @@
+name: Continuous Monitoring
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to monitor'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - prod
+      duration:
+        description: 'Monitoring duration in minutes'
+        required: true
+        default: '10'
+        type: string
+      notify:
+        description: 'Send notifications for alerts'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  MONITORING_INTERVAL: 5
+  DEV_URL: https://todoappdevstatic.z13.web.core.windows.net/
+  PROD_URL: https://todoapprodstatic.z13.web.core.windows.net/
+
+jobs:
+  monitor-dev:
+    name: Monitor Development Environment
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || github.event.inputs.environment == 'dev' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci || npm install
+      
+      - name: Run continuous monitoring
+        run: |
+          echo "Starting continuous monitoring for development environment..."
+          DURATION=${{ github.event.inputs.duration || '10' }}
+          NOTIFY=${{ github.event.inputs.notify || 'false' }}
+          
+          if [ "$NOTIFY" = "true" ]; then
+            node continuous-monitor.js dev --notify --interval=${{ env.MONITORING_INTERVAL }} --duration=$DURATION
+          else
+            node continuous-monitor.js dev --interval=${{ env.MONITORING_INTERVAL }} --duration=$DURATION
+          fi
+      
+      - name: Upload monitoring results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-monitoring-results
+          path: |
+            metrics-dev.json
+            monitor-dev.log
+      
+      - name: Send monitoring report
+        if: ${{ github.event.inputs.notify == 'true' || github.event_name == 'schedule' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Development Environment Monitoring Report"
+          body: |
+            Development environment monitoring completed.
+            
+            Environment: Development
+            URL: ${{ env.DEV_URL }}
+            Duration: ${{ github.event.inputs.duration || '10' }} minutes
+            
+            Check the attached monitoring logs for details.
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: GitHub Actions
+          attachments: monitor-dev.log
+        continue-on-error: true
+
+  monitor-prod:
+    name: Monitor Production Environment
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' || github.event.inputs.environment == 'prod' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci || npm install
+      
+      - name: Run continuous monitoring
+        run: |
+          echo "Starting continuous monitoring for production environment..."
+          DURATION=${{ github.event.inputs.duration || '10' }}
+          NOTIFY=${{ github.event.inputs.notify || 'true' }}
+          
+          if [ "$NOTIFY" = "true" ]; then
+            node continuous-monitor.js prod --notify --interval=${{ env.MONITORING_INTERVAL }} --duration=$DURATION
+          else
+            node continuous-monitor.js prod --interval=${{ env.MONITORING_INTERVAL }} --duration=$DURATION
+          fi
+      
+      - name: Upload monitoring results
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-monitoring-results
+          path: |
+            metrics-prod.json
+            monitor-prod.log
+      
+      - name: Send monitoring report
+        if: ${{ github.event.inputs.notify == 'true' || github.event_name == 'schedule' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "Production Environment Monitoring Report"
+          body: |
+            Production environment monitoring completed.
+            
+            Environment: Production
+            URL: ${{ env.PROD_URL }}
+            Duration: ${{ github.event.inputs.duration || '10' }} minutes
+            
+            Check the attached monitoring logs for details.
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: GitHub Actions
+          attachments: monitor-prod.log
+        continue-on-error: true

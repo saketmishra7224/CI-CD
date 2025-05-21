@@ -1,21 +1,40 @@
 #!/bin/sh
-# Pre-commit hook to check for CSS linting errors
+# Pre-commit hook to check for CSS and JavaScript linting errors
 
+# CSS Linting
 echo "Running CSS linting check..."
-FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(css)$')
+CSS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(css)$')
 
-if [ -z "$FILES" ]; then
+if [ -z "$CSS_FILES" ]; then
   echo "No CSS files to check. Skipping CSS linting."
-  exit 0
+else
+  # Run stylelint on the staged CSS files
+  npx stylelint $CSS_FILES
+
+  if [ $? -ne 0 ]; then
+    echo "❌ CSS linting failed. Please fix the above errors and try again."
+    exit 1
+  fi
+
+  echo "✅ CSS linting passed!"
 fi
 
-# Run stylelint on the staged CSS files
-npx stylelint $FILES
+# JavaScript Linting
+echo "Running JavaScript linting check..."
+JS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js)$')
 
-if [ $? -ne 0 ]; then
-  echo "❌ CSS linting failed. Please fix the above errors and try again."
-  exit 1
+if [ -z "$JS_FILES" ]; then
+  echo "No JavaScript files to check. Skipping JavaScript linting."
+else
+  # Run eslint on the staged JS files
+  npx eslint $JS_FILES
+
+  if [ $? -ne 0 ]; then
+    echo "❌ JavaScript linting failed. Please fix the above errors and try again."
+    exit 1
+  fi
+
+  echo "✅ JavaScript linting passed!"
 fi
 
-echo "✅ CSS linting passed!"
 exit 0
