@@ -113,4 +113,29 @@ npm run deploy:prod  # Deploy to production environment
 npm run start        # Start local development server
 npm run start:dev    # Lint and start local server
 npm run start:prod   # Lint, build, and start production server
+npm run lint:fix     # Fix linting errors automatically
+npm run setup:hooks  # Set up Git hooks for Windows users
+npm run setup:hooks:unix # Set up Git hooks for Unix users
 ```
+
+## Git Hooks
+
+The repository contains Git hooks to ensure code quality at every commit. These hooks automatically check code quality before allowing commits.
+
+### Available Hooks
+
+- **pre-commit**: Checks CSS files for linting errors before allowing commits
+
+### Setting Up Hooks
+
+Run the hook setup script:
+
+```bash
+# For Windows users
+npm run setup:hooks
+
+# For Unix-based users (Linux/macOS)
+npm run setup:hooks:unix
+```
+
+For more details about the Git hooks, see [GIT-HOOKS.md](GIT-HOOKS.md).

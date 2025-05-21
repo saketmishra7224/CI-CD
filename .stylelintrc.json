@@ -1,5 +1,6 @@
 {
-  "extends": "stylelint-config-standard",  "rules": {
+  "extends": "stylelint-config-standard",
+  "rules": {
     "no-duplicate-selectors": true,
     "color-hex-length": "short",
     "color-named": "never",
