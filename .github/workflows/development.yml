@@ -13,62 +13,62 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
         
-    - name: Install dependencies
-      run: npm ci || npm install
+      - name: Install dependencies
+        run: npm ci || npm install
     
-    - name: Validate HTML
-      run: npx htmlhint *.html
+      - name: Validate HTML
+        run: npx htmlhint *.html
       
-    - name: Lint CSS
-      run: npx stylelint "*.css" || true
+      - name: Lint CSS
+        run: npx stylelint "*.css" || true
     
-    - name: Lint JavaScript
-      run: npx eslint "*.js" || true
+      - name: Lint JavaScript
+        run: npx eslint "*.js" || true
       
-    - name: Run Tests
-      run: npm test
+      - name: Run Tests
+        run: npm test
       
-    - name: Build for Development
-      run: npm run build
-      env:
-        NODE_ENV: development
+      - name: Build for Development
+        run: npm run build
+        env:
+          NODE_ENV: development
       
-    - name: Archive build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: website-files
-        path: build/
+      - name: Archive build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-files
+          path: build/
         
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code for workflow scripts
-      uses: actions/checkout@v3
+      - name: Checkout code for workflow scripts
+        uses: actions/checkout@v4
         
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: website-files
-        path: ./site
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: website-files
+          path: ./site
         
-    - name: Deploy to Development Environment
-      run: |
-        echo "Deploying to development environment..."
-        # In a real-world scenario, you might deploy to a development server
-        # Example deployment commands would go here
-        echo "Development deployment complete"
+      - name: Deploy to Development Environment
+        run: |
+          echo "Deploying to development environment..."
+          # In a real-world scenario, you might deploy to a development server
+          # Example deployment commands would go here
+          echo "Development deployment complete"
         
-    - name: Notify Deployment Status
-      run: |
-        echo "Development deployment completed successfully!"
-        # Add notification steps (Slack, Teams, email) here if needed
+      - name: Notify Deployment Status
+        run: |
+          echo "Development deployment completed successfully!"
+          # Add notification steps (Slack, Teams, email) here if needed
