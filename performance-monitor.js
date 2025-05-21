@@ -15,23 +15,23 @@
  *   node performance-monitor.js https://todoapprodstatic.z13.web.core.windows.net/ --detailed
  */
 
-const https = require('https');
-const http = require('http');
-const { performance } = require('perf_hooks');
-const fs = require('fs');
-const path = require('path');
+const https = require("https");
+const http = require("http");
+const { performance } = require("perf_hooks");
+const fs = require("fs");
+const path = require("path");
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const url = args[0] || 'http://localhost:8080';
-const isDetailedReport = args.includes('--detailed');
-const isCI = args.includes('--ci');
+const url = args[0] || "http://localhost:8080";
+const isDetailedReport = args.includes("--detailed");
+const isCI = args.includes("--ci");
 
 // Configuration
 const config = {
   numRequests: 5,
   timeoutMs: 10000,
-  outputFile: path.join(process.cwd(), 'performance-report.json'),
+  outputFile: path.join(process.cwd(), "performance-report.json"),
   thresholds: {
     responseTime: 1000, // ms
     fileSize: 500 * 1024, // 500 KB
@@ -74,10 +74,10 @@ async function runPerformanceTest() {
         });
       }
       
-      process.stdout.write('.');
+      process.stdout.write(".");
     }
     
-    console.log('\n');
+    console.log("\n");
     
     // Calculate statistics
     const avgLoadTime = loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length;
@@ -107,8 +107,8 @@ async function runPerformanceTest() {
     }
     
     // Print report
-    console.log('📊 Performance Report');
-    console.log('-------------------');
+    console.log("📊 Performance Report");
+    console.log("-------------------");
     console.log(`URL: ${url}`);
     console.log(`Average Response Time: ${avgLoadTime.toFixed(2)} ms`);
     console.log(`Min/Max Response Time: ${minLoadTime.toFixed(2)} ms / ${maxLoadTime.toFixed(2)} ms`);
@@ -116,12 +116,12 @@ async function runPerformanceTest() {
     console.log(`Number of Requests: ${config.numRequests}`);
     
     if (results.issues.length > 0) {
-      console.log('\n⚠️ Issues Detected:');
+      console.log("\n⚠️ Issues Detected:");
       results.issues.forEach(issue => console.log(` - ${issue}`));
     }
     
     if (results.passedChecks.length > 0) {
-      console.log('\n✅ Passed Checks:');
+      console.log("\n✅ Passed Checks:");
       results.passedChecks.forEach(check => console.log(` - ${check}`));
     }
     
@@ -144,7 +144,7 @@ async function runPerformanceTest() {
 
 function makeRequest(url) {
   return new Promise((resolve, reject) => {
-    const client = url.startsWith('https') ? https : http;
+    const client = url.startsWith("https") ? https : http;
     const timeout = setTimeout(() => {
       req.abort();
       reject(new Error(`Request timed out after ${config.timeoutMs}ms`));
@@ -157,21 +157,21 @@ function makeRequest(url) {
         return reject(new Error(`HTTP Error ${res.statusCode}: ${res.statusMessage}`));
       }
       
-      let data = '';
-      res.on('data', chunk => {
+      let data = "";
+      res.on("data", chunk => {
         data += chunk;
       });
       
-      res.on('end', () => {
+      res.on("end", () => {
         resolve({
           statusCode: res.statusCode,
-          size: Buffer.byteLength(data, 'utf8'),
+          size: Buffer.byteLength(data, "utf8"),
           headers: res.headers
         });
       });
     });
     
-    req.on('error', (err) => {
+    req.on("error", (err) => {
       clearTimeout(timeout);
       reject(err);
     });

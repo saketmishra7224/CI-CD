@@ -22,37 +22,37 @@
  *   node continuous-monitor.js prod --notify --interval=10
  */
 
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const { performance } = require('perf_hooks');
-const os = require('os');
+const https = require("https");
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const { performance } = require("perf_hooks");
+const os = require("os");
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const environment = args[0] || 'dev';
+const environment = args[0] || "dev";
 const options = parseCommandLineOptions(args.slice(1));
 
 // Configuration
 const config = {
   environments: {
     dev: {
-      url: 'https://todoappdevstatic.z13.web.core.windows.net/',
+      url: "https://todoappdevstatic.z13.web.core.windows.net/",
       thresholds: {
         responseTime: 1500, // ms
         availability: 95 // percentage
       }
     },
     prod: {
-      url: 'https://todoapprodstatic.z13.web.core.windows.net/',
+      url: "https://todoapprodstatic.z13.web.core.windows.net/",
       thresholds: {
         responseTime: 800, // ms
         availability: 99.9 // percentage
       }
     },
     local: {
-      url: 'http://localhost:8080',
+      url: "http://localhost:8080",
       thresholds: {
         responseTime: 300, // ms
         availability: 99 // percentage
@@ -101,7 +101,7 @@ if (config.duration > 0) {
     stopMonitoring();
   }, config.duration * 60 * 1000);
 }
-console.log('-------------------------------------------');
+console.log("-------------------------------------------");
 
 // Start interval
 monitoringInterval = setInterval(runHealthCheck, config.checkInterval * 1000);
@@ -110,8 +110,8 @@ monitoringInterval = setInterval(runHealthCheck, config.checkInterval * 1000);
 runHealthCheck();
 
 // Handle graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n🛑 Monitoring interrupted. Generating final report...');
+process.on("SIGINT", () => {
+  console.log("\n🛑 Monitoring interrupted. Generating final report...");
   stopMonitoring();
 });
 
@@ -150,7 +150,7 @@ async function runHealthCheck() {
     if (responseTime > currentEnv.thresholds.responseTime) {
       const alert = {
         timestamp,
-        type: 'performance',
+        type: "performance",
         message: `Response time (${responseTime.toFixed(2)}ms) exceeds threshold (${currentEnv.thresholds.responseTime}ms)`
       };
       state.alerts.push(alert);
@@ -179,7 +179,7 @@ async function runHealthCheck() {
     if (availability < currentEnv.thresholds.availability) {
       const alert = {
         timestamp,
-        type: 'availability',
+        type: "availability",
         message: `Availability (${availability.toFixed(2)}%) below threshold (${currentEnv.thresholds.availability}%)`
       };
       state.alerts.push(alert);
@@ -193,7 +193,7 @@ async function runHealthCheck() {
  */
 function makeRequest(url) {
   return new Promise((resolve, reject) => {
-    const client = url.startsWith('https') ? https : http;
+    const client = url.startsWith("https") ? https : http;
     const timeout = setTimeout(() => {
       req.destroy();
       reject(new Error(`Request timed out after ${10000}ms`));
@@ -206,21 +206,21 @@ function makeRequest(url) {
         return reject(new Error(`HTTP Error ${res.statusCode}: ${res.statusMessage}`));
       }
       
-      let data = '';
-      res.on('data', chunk => {
+      let data = "";
+      res.on("data", chunk => {
         data += chunk;
       });
       
-      res.on('end', () => {
+      res.on("end", () => {
         resolve({
           statusCode: res.statusCode,
-          size: Buffer.byteLength(data, 'utf8'),
+          size: Buffer.byteLength(data, "utf8"),
           headers: res.headers
         });
       });
     });
     
-    req.on('error', (err) => {
+    req.on("error", (err) => {
       clearTimeout(timeout);
       reject(err);
     });
@@ -248,8 +248,8 @@ function stopMonitoring() {
     ? state.totalResponseTime / state.successfulChecks 
     : 0;
   
-  console.log('\n📊 Monitoring Summary:');
-  console.log('-------------------------------------------');
+  console.log("\n📊 Monitoring Summary:");
+  console.log("-------------------------------------------");
   console.log(`⏱️  Duration: ${durationMinutes} minutes`);
   console.log(`🔢 Total checks: ${state.checks}`);
   console.log(`✅ Successful checks: ${state.successfulChecks}`);
@@ -257,11 +257,11 @@ function stopMonitoring() {
   console.log(`📈 Availability: ${availability.toFixed(2)}%`);
   console.log(`⚡ Average response time: ${avgResponseTime.toFixed(2)}ms`);
   console.log(`🚨 Total alerts: ${state.alerts.length}`);
-  console.log('-------------------------------------------');
+  console.log("-------------------------------------------");
   
   // Show alerts if any
   if (state.alerts.length > 0) {
-    console.log('\n🚨 Alerts:');
+    console.log("\n🚨 Alerts:");
     state.alerts.slice(-5).forEach(alert => {
       console.log(`[${alert.timestamp}] ${alert.type}: ${alert.message}`);
     });
@@ -270,11 +270,11 @@ function stopMonitoring() {
   // Final status
   if (availability >= currentEnv.thresholds.availability && 
       avgResponseTime <= currentEnv.thresholds.responseTime) {
-    console.log('\n✅ Overall system health: GOOD');
+    console.log("\n✅ Overall system health: GOOD");
   } else if (availability >= currentEnv.thresholds.availability * 0.9) {
-    console.log('\n⚠️ Overall system health: DEGRADED');
+    console.log("\n⚠️ Overall system health: DEGRADED");
   } else {
-    console.log('\n❌ Overall system health: CRITICAL');
+    console.log("\n❌ Overall system health: CRITICAL");
   }
   
   // Write summary to log
@@ -288,10 +288,10 @@ function stopMonitoring() {
     availability: availability.toFixed(2),
     avgResponseTime: avgResponseTime.toFixed(2),
     alerts: state.alerts.length,
-    health: availability >= currentEnv.thresholds.availability ? 'GOOD' : 'DEGRADED'
+    health: availability >= currentEnv.thresholds.availability ? "GOOD" : "DEGRADED"
   };
   
-  fs.appendFileSync(config.logFile, JSON.stringify(summary) + '\n', 'utf8');
+  fs.appendFileSync(config.logFile, JSON.stringify(summary) + "\n", "utf8");
 }
 
 /**
@@ -306,7 +306,7 @@ function initializeMetricsFile() {
   };
   
   if (!fs.existsSync(config.metricsFile)) {
-    fs.writeFileSync(config.metricsFile, JSON.stringify(header) + '\n', 'utf8');
+    fs.writeFileSync(config.metricsFile, JSON.stringify(header) + "\n", "utf8");
   }
 }
 
@@ -314,7 +314,7 @@ function initializeMetricsFile() {
  * Save a metric to the metrics file
  */
 function saveMetricToFile(metric) {
-  fs.appendFileSync(config.metricsFile, JSON.stringify(metric) + '\n', 'utf8');
+  fs.appendFileSync(config.metricsFile, JSON.stringify(metric) + "\n", "utf8");
 }
 
 /**
@@ -338,12 +338,12 @@ function parseCommandLineOptions(args) {
   const options = {};
   
   args.forEach(arg => {
-    if (arg === '--notify') {
+    if (arg === "--notify") {
       options.notify = true;
-    } else if (arg.startsWith('--interval=')) {
-      options.interval = parseInt(arg.split('=')[1], 10);
-    } else if (arg.startsWith('--duration=')) {
-      options.duration = parseInt(arg.split('=')[1], 10);
+    } else if (arg.startsWith("--interval=")) {
+      options.interval = parseInt(arg.split("=")[1], 10);
+    } else if (arg.startsWith("--duration=")) {
+      options.duration = parseInt(arg.split("=")[1], 10);
     }
   });
   
