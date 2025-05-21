@@ -1,4 +1,4 @@
-﻿name: Production Workflow
+name: Production Workflow
 
 on:
   push:
@@ -13,66 +13,66 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
         
-    - name: Install dependencies
-      run: npm ci || npm install
+      - name: Install dependencies
+        run: npm ci || npm install
     
-    - name: Validate HTML
-      run: npx htmlhint *.html
+      - name: Validate HTML
+        run: npx htmlhint *.html
     
-    - name: Lint CSS
-      run: npx stylelint "*.css"
+      - name: Lint CSS
+        run: npx stylelint "*.css"
     
-    - name: Lint JavaScript
-      run: npx eslint "*.js"
+      - name: Lint JavaScript
+        run: npx eslint "*.js"
       
-    - name: Run Tests
-      run: npm test
+      - name: Run Tests
+        run: npm test
       
-    - name: Build for Production
-      run: npm run build
-      env:
-        NODE_ENV: production
+      - name: Build for Production
+        run: npm run build
+        env:
+          NODE_ENV: production
       
-    - name: Archive build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: website-files
-        path: build/
+      - name: Archive build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-files
+          path: build/
         
   deploy-prod:
     needs: build
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code for workflow scripts
-      uses: actions/checkout@v3
+      - name: Checkout code for workflow scripts
+        uses: actions/checkout@v4
         
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: website-files
-        path: ./site
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: website-files
+          path: ./site
         
-    - name: Deploy to Production Environment
-      run: |
-        echo "Deploying to production environment..."
-        # In a real-world scenario, you might deploy to:
-        # - AWS S3 bucket + CloudFront for production
-        # - Azure Static Web Apps production instance
-        # - GitHub Pages
-        # - Netlify/Vercel production environment
+      - name: Deploy to Production Environment
+        run: |
+          echo "Deploying to production environment..."
+          # In a real-world scenario, you might deploy to:
+          # - AWS S3 bucket + CloudFront for production
+          # - Azure Static Web Apps production instance
+          # - GitHub Pages
+          # - Netlify/Vercel production environment
         
-        echo "Production deployment complete"
+          echo "Production deployment complete"
         
-    - name: Notify Deployment Status
-      run: |
-        echo "Production deployment completed successfully!"
-        # Add notification steps (Slack, Teams, email) here if needed
+      - name: Notify Deployment Status
+        run: |
+          echo "Production deployment completed successfully!"
+          # Add notification steps (Slack, Teams, email) here if needed
