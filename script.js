@@ -17,6 +17,11 @@ function addTask() {
   saveData();
 }
 
+// Support for testing with Jest
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { addTask, saveData, showTask };
+}
+
 listContainer.addEventListener("click", function(e){
   if(e.target.tagName === "LI"){
     e.target.classList.toggle("checked");

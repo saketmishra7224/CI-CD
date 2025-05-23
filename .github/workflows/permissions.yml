@@ -1,0 +1,12 @@
+# This file sets repository-level permissions for GitHub Actions
+# It ensures workflows have the necessary permissions to deploy to GitHub Pages
+
+name: GitHub Actions Permissions
+
+permissions:
+  # Contents permission allows workflows to read/write repository content
+  contents: write
+  # Pages permission allows workflows to deploy to GitHub Pages
+  pages: write
+  # ID token permission allows workflows to use OIDC tokens for authentication
+  id-token: write

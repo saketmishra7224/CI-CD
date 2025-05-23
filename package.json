@@ -1,0 +1,21 @@
+{
+  "name": "todo-list-app",
+  "version": "1.0.1",
+  "description": "A simple and efficient to-do list application",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest --passWithNoTests",
+    "start": "npx serve",
+    "build": "node scripts/build.js",
+    "deploy": "node scripts/build.js && npx serve dist"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "serve": "^14.2.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

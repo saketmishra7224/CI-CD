@@ -5,6 +5,12 @@ on:
     branches:
       - dev
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,7 +19,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js (or Python, etc.)
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -24,6 +30,13 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Deploy to Development Server
-        run: echo "Deploying to development server..."
-        # Replace this with actual deployment commands (e.g., SSH, FTP, or AWS/GCP CLI)
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages (Dev)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          target-folder: dev
+          clean: true
